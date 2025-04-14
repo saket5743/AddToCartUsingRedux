@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [inputValue, setInputValue] = useState({name:'', email:'', password:''});
     const [flag, setFlag] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(()=>{
         console.log('Registered Successfully')
@@ -13,28 +16,58 @@ const Register = () => {
         console.log(inputValue)
     }
 
-    const handleSubmitForm = (e) => {
-         e.preventDefault();
-         if(![inputValue.name || inputValue.email || inputValue.password]){
-            alert('All fields are required.')
-         }else{
-            fetch('http://localhost:5009/api/v1/user/register', {
+    // const handleSubmitForm = (e) => {
+    //      e.preventDefault();
+    //      if(![inputValue.name && inputValue.email && inputValue.password]){
+    //         alert('All fields are required.')
+    //      }else{
+    //         fetch('http://localhost:5009/api/v1/user/register', {
+    //             method:'POST',
+    //             headers:{
+    //                 'Content-Type':'application/json'
+    //             },
+    //             body:JSON.stringify(inputValue)
+    //         })
+    //         .then((response) => response.json())
+    //         .then((data)=>{
+    //             console.log(data)
+    //             setFlag(true)
+    //             window.location.href = "/login";
+    //         })
+    //         .catch((error)=>{
+    //             console.error('Error:', error)
+    //         })
+    //      }
+    // }
+
+
+    // Register by using async await
+
+    const handleSubmitForm = async (e) => {
+        e.preventDefault();
+
+        if(![inputValue.name && inputValue.email && inputValue.password]){
+            alert('All fields are required')
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5009/api/v1/user/register', {
                 method:'POST',
                 headers:{
-                    'Content-Type':'application/json'
+                    'Content-Type':'application/json',
                 },
-                body:JSON.stringify(inputValue)
+                body: JSON.stringify(inputValue),
             })
-            .then((response) => response.json())
-            .then((data)=>{
-                console.log(data)
-                setFlag(true)
-                window.location.href = "/login";
-            })
-            .catch((error)=>{
-                console.error('Error:', error)
-            })
-         }
+
+            const data = await response.json();
+            console.log(data)
+
+            setFlag(true)
+            navigate('/login');
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
 

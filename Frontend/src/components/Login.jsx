@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [inputData, setInputData] = useState({email:'', password:''});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -16,38 +19,73 @@ const Login = () => {
     }
   },[])
 
-  const handleSubmit = (e) => {
-        e.preventDefault();
+  // const handleSubmit = (e) => {
+  //       e.preventDefault();
         
-        if(![inputData.email || inputData.password]){
-          alert('Both fields are required')
-        }else{
-          fetch('http://localhost:5009/api/v1/user/login', {
-            method:'POST',
-            headers:{
-              'Content-Type': 'application/json'
-            },
-            body:JSON.stringify(inputData)
-          })
-          .then((response)=> response.json())
-          .then((data)=>{
-            if(data.success){
-              setIsLoggedIn(true)
-              setInputData({email:'', password:''})
-              console.log(inputData)
-              localStorage.setItem('userdetails', JSON.stringify(data.data.user));
-              window.location.href = "/";
-              localStorage.getItem("userdetails","true")
-            }else{
-              alert('Invalid email or password')
-            }
-          })
-          .catch((error)=>{
-            console.error('Error:', error);
-            alert('An error occurred during login.');
-          })
-        }
-  }
+  //       if(![inputData.email || inputData.password]){
+  //         alert('Both fields are required')
+  //       }else{
+  //         fetch('http://localhost:5009/api/v1/user/login', {
+  //           method:'POST',
+  //           headers:{
+  //             'Content-Type': 'application/json'
+  //           },
+  //           body:JSON.stringify(inputData)
+  //         })
+  //         .then((response)=> response.json())
+  //         .then((data)=>{
+  //           if(data.success){
+  //             setIsLoggedIn(true)
+  //             setInputData({email:'', password:''})
+  //             console.log(inputData)
+  //             localStorage.setItem('userdetails', JSON.stringify(data.data.user));
+  //             window.location.href = "/";
+  //             localStorage.getItem("userdetails","true")
+  //           }else{
+  //             alert('Invalid email or password')
+  //           }
+  //         })
+  //         .catch((error)=>{
+  //           console.error('Error:', error);
+  //           alert('An error occurred during login.');
+  //         })
+  //       }
+  // }
+
+
+  // Login api by using async-await
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (![inputData.email || inputData.password]) {
+      alert("Both the fields are required");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5009/api/v1/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(inputData),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setIsLoggedIn(true);
+        setInputData({ email: "", password: "" });
+        console.log(inputData);
+        localStorage.setItem("userdetails", JSON.stringify(data.data.user));
+        navigate('/')
+      } else {
+        alert("Invalid email or password");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred during login");
+    }
+  };
 
   return (
     <div>

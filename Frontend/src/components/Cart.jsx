@@ -58,13 +58,21 @@ const Cart = () => {
         ...count,
         [productId] : (count[productId] || 1) + 1
        }
-       
+       setCount(newCount)
+       updatedLocalStorage(newCount)
     }
 
-    function handleDecrease(){
-
+    function handleDecrease(productId) {
+      const currentCount = count[productId] || 1;
+      if (currentCount > 1) {
+        const newCount = {
+          ...count,
+          [productId]: count[productId] - 1,
+        };
+        setCount(newCount);
+        updatedLocalStorage(newCount);
+      }
     }
-
 
   return (
     <div>
@@ -83,8 +91,8 @@ const Cart = () => {
                     </div>
                     <div>
                         Count : {count[product.id] || 1} 
-                        <span style={{backgroundColor:'yellow', border:'1px solid gray'}} onClick={()=>handleIncrease(product.id)}>+</span> 
-                        <span style={{backgroundColor:'yellow', border:'1px solid gray'}} onClick={()=>handleDecrease(product.id)}>-</span>
+                        <span style={{border:'1px solid gray', height:'10px', width:'80px', cursor:'pointer', marginLeft:'10px'}} onClick={()=>handleIncrease(product.id)}>+</span> 
+                        <span style={{border:'1px solid gray', height:'10px', width:'80px', cursor:'pointer', marginLeft:'10px'}} onClick={()=>handleDecrease(product.id)}>-</span>
                     </div>
                     <div>
                         <button onClick={()=>handleRemoveFromCart(product.id)}>Discard</button>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import {useDispatch} from "react-redux"
 import { Action } from '../Redux/Action';
+import { useNavigate } from 'react-router-dom';
 
 
 const Home = () => {
+  
   const [checkLogin, setCheckLogin] = useState(false);
   const [data , setdata] = useState([])
   const [search , setSearch] = useState("")
@@ -24,9 +26,11 @@ const Home = () => {
     productData();
   }, []);
 
+  const navigate = useNavigate()
+
   const handleAddToCart =(product)=>{
      if(!checkLogin){
-      window.location.href = '/login'
+      navigate('/login')
      }else{
       console.log(product, "sddsd")
 
@@ -37,6 +41,7 @@ const Home = () => {
         const updatedCart = [...existingCart, product];
         localStorage.setItem("clothes", JSON.stringify(updatedCart));
         dispatch(Action(product))
+        navigate('/cart')
       }else{
         console.log("Product is already in cart")
       }
